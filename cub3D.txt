@@ -1,0 +1,92 @@
+¿Qué es ray-casting?
+
+Es una técnica para simular 3D a partir de un mapa 2D. La idea es que desde la posición del jugador lanzas un "rayo" en cada columna de la pantalla y mides a qué distancia choca con una pared. Si está cerca → la pared se dibuja grande. Si está lejos → se dibuja pequeña.
+
+Mapa 2D:              Lo que ve el jugador:
+1111111               █▓▒░    ░▒▓█
+1000001               █▓▒░    ░▒▓█
+100P001               █▓▒░    ░▒▓█
+1000001               suelo suelo
+1111111
+Cómo dividirlo entre dos
+
+Sí se puede dividir, pero necesitáis acordar las estructuras antes. Una división posible:
+
+Tú — Parser + movimiento del jugador
+
+Leer el .cub y validar el mapa
+Mover al jugador con WASD
+Detectar colisiones con las paredes
+Gestionar la rotación de la cámara con las flechas
+
+Tu compañero — Renderizado
+
+Inicializar MiniLibX y la ventana
+Implementar el ray-casting (lanzar los rayos, calcular distancias)
+Dibujar las paredes con las texturas
+Dibujar el suelo y el techo con los colores
+El flujo entre los dos
+tú                          tu compañero
+─────────────────────────   ─────────────────────────
+parser rellena t_game   →   motor lee t_game
+jugador se mueve        →   motor renderiza cada frame
+colisión detectada      →   jugador no atraviesa pared
+
+Lo que une vuestro código es la estructura t_game — tú la rellenas y tu compañero la lee para dibujar. ¿Quieres que empecemos con el parser?
+
+que tocaria cada uno de raycasting? es una funcion solo?
+
+No, el ray-casting son varias funciones. Te explico cómo dividirlo:
+
+Las funciones del ray-casting
+render_frame()          ← llama a todo lo demás cada frame
+│
+├── cast_ray()          ← lanza UN rayo para UNA columna de pantalla
+│     ├── calc_direction()    ← calcula hacia dónde va el rayo
+│     ├── calc_distance()     ← mide cuándo choca con una pared (DDA)
+│     └── get_wall_side()     ← detecta si es pared N/S/E/W
+│
+├── draw_column()       ← dibuja UNA columna vertical en pantalla
+│     ├── get_texture()       ← qué textura usar según N/S/E/W
+│     └── draw_pixels()       ← pinta los pixels uno a uno
+│
+└── draw_floor_ceiling() ← pinta suelo y techo con color plano
+Cómo dividirlo entre dos
+
+Tú:
+
+cast_ray() → la matemática del rayo, calcular distancias con el algoritmo DDA
+get_wall_side() → detectar qué cara de la pared tocó el rayo
+
+Tu compañero:
+
+draw_column() → dibujar cada columna con la textura correcta
+draw_floor_ceiling() → pintar suelo y techo
+render_frame() → el bucle principal que lo une todo
+
+------
+División completa del proyecto
+
+Tú — Parser + estructura + movimiento
+
+parsing/
+├── parse_file.c        ← abre y lee el .cub
+├── parse_textures.c    ← lee NO/SO/WE/EA y los colores F/C
+├── parse_map.c         ← lee el grid del mapa
+├── validate_map.c      ← comprueba que esté cerrado por paredes
+└── errors.c            ← gestión de errores y salida limpia
+
+movement/
+├── move_player.c       ← WASD, actualiza x/y del jugador
+├── rotate_player.c     ← flechas, actualiza el ángulo
+└── collision.c         ← comprueba que no atraviese paredes
+
+Tu compañero — MiniLibX + ray-casting + render
+
+engine/
+├── init_mlx.c          ← inicializa ventana y conexión mlx
+├── render_frame.c      ← bucle principal, llama a todo
+├── cast_ray.c          ← matemática del rayo + algoritmo DDA
+├── draw_column.c       ← dibuja cada columna con textura
+├── draw_floor_ceil.c   ← pinta suelo y techo
+└── textures.c          ← carga las texturas xpm
