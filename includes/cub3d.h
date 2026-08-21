@@ -47,8 +47,8 @@ typedef struct s_img
 typedef struct s_map
 {
 	char	**map;
-	int		map_width;
-	int		map_height;
+	int		width;
+	int		height;
 	int		floor;
 	int		ceiling;
 }	t_map;
@@ -60,8 +60,29 @@ typedef struct s_game
 	t_player	player;
 	t_map		map;
 	t_img		frame;
-	t_img		textures[4];
+	t_img		texture[4];
 }	t_game;
+
+typedef struct s_ray
+{
+	double	camara_x;
+	double	dir_x;
+	double	dir_y;
+	int		map_x;
+	int		map_y;
+	int		step_x;
+	int		step_y;
+	double	sidedist_x;
+	double	sidedist_y;
+	double	delta_x;
+	double	delta_y;
+	double	walldist;
+	int		side;
+	double	wall_x;
+	int		draw_start;
+	int		draw_end;
+	int		line_height;
+}	t_ray;
 
 /* parsing */
 int		parse_scene(char *file, t_game *game);
@@ -77,11 +98,14 @@ void	free_split(char **split);
 void	free_game(t_game *game);
 
 /* init */
-int	init_mlx(t_game *game);
+int		init_mlx(t_game *game);
 int		init_frame(t_game *game);
 
 /* render */
 int		render_frame(t_game *game);
+void	cast_ray(t_game *game, int x);
+void	render_wall_slice(t_game *game, t_ray *ray, int x);
+
 
 /* input */
 int		handle_keypress(int key, t_game *game);

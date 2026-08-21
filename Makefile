@@ -21,6 +21,11 @@ SRCS		= main.c \
 			  utils/free.c \
 			  parsing/parse_scene.c \
 			  parsing/parse_element.c \
+			  parsing/parse_texture.c \
+			  parsing/parse_color.c \
+			  parsing/parse_map.c \
+			  parsing/validate_map.c \
+			  render/cast_ray.c \
 			  stubs.c
 
 OBJS		= $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
