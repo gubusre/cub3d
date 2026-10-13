@@ -4,10 +4,10 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <math.h>
-# include <mlx.h>
 # include <unistd.h>
 # include <fcntl.h>
-# include "../libft/libft.h" 
+# include <mlx.h>
+# include "../libft/libft.h"
 
 # define OK 0
 # define ERROR 1
@@ -19,9 +19,19 @@
 # define SO 1
 # define WE 2
 # define EA 3
-
 # define FLOOR 4
 # define CEILING 5
+
+# define KEY_ESC 65307
+# define KEY_W 119
+# define KEY_A 97
+# define KEY_S 115
+# define KEY_D 100
+# define KEY_LEFT 65361
+# define KEY_RIGHT 65363
+
+# define MOVE_SPEED 0.10
+# define ROT_SPEED 0.08
 
 typedef struct s_player
 {
@@ -65,7 +75,7 @@ typedef struct s_game
 
 typedef struct s_ray
 {
-	double	camara_x;
+	double	camera_x;
 	double	dir_x;
 	double	dir_y;
 	int		map_x;
@@ -85,6 +95,7 @@ typedef struct s_ray
 }	t_ray;
 
 /* parsing */
+char	**read_file(char *file);
 int		parse_scene(char *file, t_game *game);
 int		parse_element(char *line, t_game *game, int *found);
 int		parse_texture(char *line, t_game *game, int id, int *found);
@@ -105,9 +116,11 @@ int		init_frame(t_game *game);
 int		render_frame(t_game *game);
 void	cast_ray(t_game *game, int x);
 void	render_wall_slice(t_game *game, t_ray *ray, int x);
-
+void	put_pixel(t_img *img, int x, int y, int color);
+int		get_texture_pixel(t_img *tex, int x, int y);
 
 /* input */
 int		handle_keypress(int key, t_game *game);
 int		close_window(t_game *game);
+
 #endif

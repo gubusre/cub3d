@@ -1,6 +1,6 @@
 #include "cub3d.h"
 
-int		parse_element(char *line, t_game *game, int *found)
+int	parse_element(char *line, t_game *game, int *found)
 {
 	if (ft_strncmp(line, "NO ", 3) == 0)
 		return (parse_texture(line + 2, game, NO, found));
